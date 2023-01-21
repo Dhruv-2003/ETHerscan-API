@@ -1,15 +1,97 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from '@next/font/google'
-import styles from '@/styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import { Inter } from "@next/font/google";
+import styles from "@/styles/Home.module.css";
+import axios from "axios";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
+const API_KEY = process.env.ETHERSCAN_API_KEY;
 
 export default function Home() {
+  const fetchABI = (contractAddress) => {
+    try {
+      const abiURL = `https://api.etherscan.io/api?module=contract&action=getabi&address=${contractAddress}&apikey=${API_KEY}`;
+      axios
+        .get(abiURL)
+        .then(function (data) {
+          console.log(data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchCode = (contractAddress) => {
+    try {
+      const abiURL = `https://api.etherscan.io/api?module=contract&action=getsourcecode&address=${contractAddress}&apikey=${API_KEY}`;
+      axios
+        .get(abiURL)
+        .then(function (data) {
+          console.log(data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const verifyABI = (contractAddress, contractName, contractCode) => {
+    try {
+      const verifyURL = "";
+      const config = {
+        type: "POST",
+        url: verifyURL,
+        data: {
+          apikey: API_KEY, //A valid API-Key is required
+          module: "contract", //Do not change
+          action: "verifysourcecode", //Do not change
+          contractaddress: contractAddress, //Contract Address starts with 0x...
+          sourceCode: contractCode, //Contract Source Code (Flattened if necessary)
+          // codeformat: $("#codeformat").val(), //solidity-single-file (default) or solidity-standard-json-input (for std-input-json-format support
+          contractname: contractName, //ContractName (if codeformat=solidity-standard-json-input, then enter contractname as ex: erc20.sol:erc20)
+          compilerversion: $("#compilerversion").val(), // see https://etherscan.io/solcversions for list of support versions
+          optimizationUsed: $("#optimizationUsed").val(), //0 = No Optimization, 1 = Optimization used (applicable when codeformat=solidity-single-file)
+          runs: 200, //set to 200 as default unless otherwise  (applicable when codeformat=solidity-single-file)
+          constructorArguements: $("#constructorArguements").val(), //if applicable
+          evmversion: $("#evmVersion").val(), //leave blank for compiler default, homestead, tangerineWhistle, spuriousDragon, byzantium, constantinople, petersburg, istanbul (applicable when codeformat=solidity-single-file)
+          licenseType: $("#licenseType").val(), //Valid codes 1-14 where 1=No License .. 14=Business Source License 1.1, see https://etherscan.io/contract-license-types
+          libraryname1: $("#libraryname1").val(), //if applicable, a matching pair with libraryaddress1 required
+          libraryaddress1: $("#libraryaddress1").val(), //if applicable, a matching pair with libraryname1 required
+          libraryname2: $("#libraryname2").val(), //if applicable, matching pair required
+          libraryaddress2: $("#libraryaddress2").val(), //if applicable, matching pair required
+          libraryname3: $("#libraryname3").val(), //if applicable, matching pair required
+          libraryaddress3: $("#libraryaddress3").val(), //if applicable, matching pair required
+          libraryname4: $("#libraryname4").val(), //if applicable, matching pair required
+          libraryaddress4: $("#libraryaddress4").val(), //if applicable, matching pair required
+          libraryname5: $("#libraryname5").val(), //if applicable, matching pair required
+          libraryaddress5: $("#libraryaddress5").val(), //if applicable, matching pair required
+          libraryname6: $("#libraryname6").val(), //if applicable, matching pair required
+          libraryaddress6: $("#libraryaddress6").val(), //if applicable, matching pair required
+          libraryname7: $("#libraryname7").val(), //if applicable, matching pair required
+          libraryaddress7: $("#libraryaddress7").val(), //if applicable, matching pair required
+          libraryname8: $("#libraryname8").val(), //if applicable, matching pair required
+          libraryaddress8: $("#libraryaddress8").val(), //if applicable, matching pair required
+          libraryname9: $("#libraryname9").val(), //if applicable, matching pair required
+          libraryaddress9: $("#libraryaddress9").val(), //if applicable, matching pair required
+          libraryname10: $("#libraryname10").val(), //if applicable, matching pair required
+          libraryaddress10: $("#libraryaddress10").val(), //if applicable, matching pair required
+        },
+      };
+      axios.post(config);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <>
       <Head>
-        <title>Create Next App</title>
+        <title>ETHerscan APIs</title>
         <meta name="description" content="Generated by create next app" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -17,16 +99,16 @@ export default function Home() {
       <main className={styles.main}>
         <div className={styles.description}>
           <p>
-            Get started by editing&nbsp;
-            <code className={styles.code}>pages/index.js</code>
+            ETHereum Mainnet
+            <a>Get started by entering a contract address</a>
           </p>
-          <div>
+          {/* <div>
             <a
               href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
               target="_blank"
               rel="noopener noreferrer"
             >
-              By{' '}
+              By{" "}
               <Image
                 src="/vercel.svg"
                 alt="Vercel Logo"
@@ -36,88 +118,14 @@ export default function Home() {
                 priority
               />
             </a>
-          </div>
+          </div> */}
         </div>
 
         <div className={styles.center}>
-          <Image
-            className={styles.logo}
-            src="/next.svg"
-            alt="Next.js Logo"
-            width={180}
-            height={37}
-            priority
-          />
-          <div className={styles.thirteen}>
-            <Image
-              src="/thirteen.svg"
-              alt="13"
-              width={40}
-              height={31}
-              priority
-            />
-          </div>
-        </div>
-
-        <div className={styles.grid}>
-          <a
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Docs <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Find in-depth information about Next.js features and&nbsp;API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Learn <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Learn about Next.js in an interactive course with&nbsp;quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Templates <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Discover and deploy boilerplate example Next.js&nbsp;projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <h2 className={inter.className}>
-              Deploy <span>-&gt;</span>
-            </h2>
-            <p className={inter.className}>
-              Instantly deploy your Next.js site to a shareable URL
-              with&nbsp;Vercel.
-            </p>
-          </a>
+          <input>Enter the contract Address</input>
+          <button></button>
         </div>
       </main>
     </>
-  )
+  );
 }
